@@ -41,8 +41,8 @@ theme.bg_clock      = "#777E76"
 --theme.taglist_bg_focus = "#ff0000"
 
 -- Display the taglist squares
-theme.taglist_squares_sel   = pathToConfig .. "powerarrowf/icons/square_sel.png"
-theme.taglist_squares_unsel = pathToConfig .. "powerarrowf/icons/square_unsel.png"
+theme.taglist_squares_sel   = pathToConfig .. "powerbar/icons/square_sel.png"
+theme.taglist_squares_unsel = pathToConfig .. "powerbar/icons/square_unsel.png"
 
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]
@@ -83,49 +83,49 @@ theme.titlebar_maximized_button_focus_active  = "/usr/share/awesome/themes/defau
 theme.wallpaper = "/home/ian/background.jpg"
 
 -- You can use your own layout icons like this:
-theme.layout_floating  = pathToConfig .. "powerarrowf/layouts/floating.png"
-theme.layout_tilebottom = pathToConfig .. "/powerarrowf/layouts/tilebottom.png"
-theme.layout_tileleft   = pathToConfig .. "powerarrowf/layouts/tileleft.png"
-theme.layout_tile = pathToConfig .. "powerarrowf/layouts/tile.png"
-theme.layout_tiletop = pathToConfig .. "powerarrowf/layouts/tiletop.png"
+theme.layout_floating  = pathToConfig .. "powerbar/layouts/floating.png"
+theme.layout_tilebottom = pathToConfig .. "/powerbar/layouts/tilebottom.png"
+theme.layout_tileleft   = pathToConfig .. "powerbar/layouts/tileleft.png"
+theme.layout_tile = pathToConfig .. "powerbar/layouts/tile.png"
+theme.layout_tiletop = pathToConfig .. "powerbar/layouts/tiletop.png"
 
 -- Arrow generation templates
-theme.arrTemplate = pathToConfig .. "powerarrowf/icons/arrow.png"
-theme.arrAltTemplate = pathToConfig .. "powerarrowf/icons/arrowAlt.png"
+theme.arrTemplate = pathToConfig .. "powerbar/icons/arrow.png"
+theme.arrAltTemplate = pathToConfig .. "powerbar/icons/arrowAlt.png"
 
 -- The clock icon:
-theme.clock = pathToConfig .. "powerarrowf/icons/myclocknew.png"
+theme.clock = pathToConfig .. "powerbar/icons/myclocknew.png"
 
 --{{ For the wifi widget icons }} --
-theme.nethigh = pathToConfig .. "powerarrowf/icons/nethigh.png"
-theme.netmedium = pathToConfig .. "powerarrowf/icons/netmedium.png"
-theme.netlow = pathToConfig .. "powerarrowf/icons/netlow.png"
+theme.nethigh = pathToConfig .. "powerbar/icons/nethigh.png"
+theme.netmedium = pathToConfig .. "powerbar/icons/netmedium.png"
+theme.netlow = pathToConfig .. "powerbar/icons/netlow.png"
 
 --{{ For the battery icon }} --
-theme.baticon = pathToConfig .. "powerarrowf/icons/battery.png"
+theme.baticon = pathToConfig .. "powerbar/icons/battery.png"
 
 --{{ For the hard drive icon }} --
-theme.fsicon = pathToConfig .. "powerarrowf/icons/hdd.png"
+theme.fsicon = pathToConfig .. "powerbar/icons/hdd.png"
 
 --{{ For the volume icons }} --
-theme.mute = pathToConfig .. "powerarrowf/icons/mute.png"
-theme.music = pathToConfig .. "powerarrowf/icons/music.png"
+theme.mute = pathToConfig .. "powerbar/icons/mute.png"
+theme.music = pathToConfig .. "powerbar/icons/music.png"
 
 --{{ For the volume icon }} --
-theme.mute = pathToConfig .. "powerarrowf/icons/volmute.png"
-theme.volhi = pathToConfig .. "powerarrowf/icons/volhi.png"
-theme.volmed = pathToConfig .. "powerarrowf/icons/volmed.png"
-theme.vollow = pathToConfig .. "powerarrowf/icons/vollow.png"
+theme.mute = pathToConfig .. "powerbar/icons/volmute.png"
+theme.volhi = pathToConfig .. "powerbar/icons/volhi.png"
+theme.volmed = pathToConfig .. "powerbar/icons/volmed.png"
+theme.vollow = pathToConfig .. "powerbar/icons/vollow.png"
 
 --{{ For the CPU icon }} --
-theme.cpuicon = pathToConfig .. "powerarrowf/icons/cpu.png"
+theme.cpuicon = pathToConfig .. "powerbar/icons/cpu.png"
 
 --{{ For the memory icon }} --
-theme.mem = pathToConfig .. "powerarrowf/icons/mem.png"
+theme.mem = pathToConfig .. "powerbar/icons/mem.png"
 
 --{{ For the memory icon }} --
-theme.mail = pathToConfig .. "powerarrowf/icons/mail.png"
-theme.mailopen = pathToConfig .. "powerarrowf/icons/mailopen.png"
+theme.mail = pathToConfig .. "powerbar/icons/mail.png"
+theme.mailopen = pathToConfig .. "powerbar/icons/mailopen.png"
 
 
 -- Define the icon theme for application icons. If not set then the icons

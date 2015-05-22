@@ -42,7 +42,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/home/ian/.config/awesome/themes/powerarrowf/theme.lua")
+beautiful.init("/home/ian/.config/awesome/themes/powerbar/theme.lua")
 awesome.font = "TerminusMedium 12"
 
 -- This is used later as the default terminal and editor to run.
