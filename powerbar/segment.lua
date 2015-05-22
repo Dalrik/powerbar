@@ -5,12 +5,16 @@ local segment = { mt = {} }
 
 function segment:set_arrow_right(arr)
     self.arr_right = arr
-    arr:set_color_left(self.color)
+    if arr then
+        arr:set_color_left(self.color)
+    end
 end
 
 function segment:set_arrow_left(arr)
     self.arr_left = arr
-    arr:set_color_right(self.color)
+    if arr then
+        arr:set_color_right(self.color)
+    end
 end
 
 function segment:set_color(color)

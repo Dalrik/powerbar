@@ -2,6 +2,7 @@ local beautiful = require("beautiful")
 local gears = require("gears")
 local wibox = require("wibox")
 local cairo = require("lgi").cairo
+local beautiful = require("beautiful")
 
 local arrow = { mt = {} }
 
@@ -78,8 +79,8 @@ local function new(isLeft)
     end
 
     ret.isLeft = isLeft
-    ret.color_left = "#000000"
-    ret.color_right = "#000000"
+    ret.color_left = beautiful.bg_normal
+    ret.color_right = beautiful.bg_normal
     ret:refresh_image()
 
     return ret

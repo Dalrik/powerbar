@@ -204,9 +204,13 @@ for s = 1, screen.count() do
     right_layout:add(powerbar.segment(mylayoutbox[s], "#313131"))
 
     -- Now bring it all together (with the tasklist in the middle)
-    local layout = wibox.layout.align.horizontal()
-    layout:set_left(left_layout)
-    layout:set_middle(mytasklist[s])
+    --local layout = wibox.layout.align.horizontal()
+    --layout:set_left(left_layout)
+    --layout:set_middle(mytasklist[s])
+    --layout:set_right(right_layout)
+    local layout = powerbar.layout.align()
+    layout:set_left(powerbar.segment(left_layout))
+    layout:set_middle(powerbar.segment(mytasklist[s]))
     layout:set_right(right_layout)
 
     mywibox[s]:set_widget(layout)

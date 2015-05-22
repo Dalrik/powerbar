@@ -6,7 +6,7 @@ local beautiful = require("beautiful")
 local systray = { mt = {} }
 
 local function new(revers)
-    local color = beautiful.bg_systray or beautiful.bg_normal or "#000000"
+    local color = beautiful.bg_systray or beautiful.bg_normal
     local seg = segment(wibox.widget.systray(revers), color)
     return seg
 end

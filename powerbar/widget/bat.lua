@@ -51,7 +51,7 @@ end
 
 local function new(battery)
     local tbox = wibox.widget.textbox()
-    local seg = segment(tbox, "#000000")
+    local seg = segment(tbox)
     vicious.register(tbox, vicious.widgets.bat, bat_update, nil, battery)
     return seg
 end
