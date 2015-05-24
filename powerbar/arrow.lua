@@ -8,8 +8,22 @@ local arrow = { mt = {} }
 
 local arrow_cache = setmetatable({}, { __mode = 'v' })
 
-function arrow.make_image(color_l, color_r, isLeft, exWidth)
+function arrow.width(exWidth)
     exWidth = exWidth or 0
+    local w, h = gears.surface.get_size(gears.surface.load(beautiful.arrTemplate))
+    return w + exWidth
+end
+
+function arrow.height()
+    local w, h = gears.surface.get_size(gears.surface.load(beautiful.arrTemplate))
+    return h
+end
+
+function arrow.make_image(color_l, color_r, isLeft, exWidth, drawSeparator)
+    exWidth = exWidth or 0
+    if drawSeparator == nil then
+        drawSeparator = true
+    end
     local cache_str = color_l .. color_r .. exWidth
     if isLeft then
         cache_str = "L" .. cache_str
@@ -42,9 +56,11 @@ function arrow.make_image(color_l, color_r, isLeft, exWidth)
         cr:paint()
 
         if color_l == color_r then
-            altTemplate = gears.surface.load(beautiful.arrAltTemplate)
-            cr:set_source_surface(altTemplate, 0, 0)
-            cr:paint()
+            if drawSeparator then
+                altTemplate = gears.surface.load(beautiful.arrAltTemplate)
+                cr:set_source_surface(altTemplate, 0, 0)
+                cr:paint()
+            end
         else
             cr:set_source(pat_r)
             cr:mask_surface(template, 0, 0)

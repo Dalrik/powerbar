@@ -2,23 +2,19 @@
 -- Default awesome theme --
 ---------------------------
 
-local gears = require("gears")
-local cairo = require("lgi").cairo
-local wibox = require("wibox")
-
 theme = {}
 
 -- Todo:  Change the $USER to yourself.
 pathToConfig = "~/.config/awesome/themes/"
 
-theme.font          = "sans 8"
+theme.font          = "Source Sans Semibold 8"
 
-theme.bg_normal     = "#222222"
+theme.bg_normal     = "#181818" -- base 00
 theme.bg_focus      = "#1E2320"
 theme.bg_urgent     = "#3F3F3F"
 theme.bg_systray    = theme.bg_normal
 
-theme.fg_normal     = "#AAAAAA"
+theme.fg_normal     = "#D8D8D8" -- base 05
 theme.fg_focus      = "#0099CC"
 theme.fg_urgent     = "#3F3F3F"
 
@@ -30,6 +26,9 @@ theme.border_marked = "#91231c"
 theme.fg_clock      = "#EEEEEE"
 theme.bg_clock      = "#777E76"
 
+theme.fg_prompt     = "#181818"
+theme.bg_prompt     = "#E8E8E8"
+
 -- There are other variable sets
 -- overriding the default one when
 -- defined, the sets are:
@@ -39,10 +38,19 @@ theme.bg_clock      = "#777E76"
 -- mouse_finder_[color|timeout|animate_timeout|radius|factor]
 -- Example:
 --theme.taglist_bg_focus = "#ff0000"
+theme.taglist_bg_focus = "#a1b56c" -- base 0B
+theme.taglist_fg_focus = "#282828" -- Base 01
+theme.taglist_bg_occupied = "#7cafc2" -- base 0D
+theme.taglist_fg_occupied = "#282828" -- base 01
+theme.taglist_bg_urgent = "#ab4642" -- base 08
+theme.taglist_fg_urgent = "#282828"
+theme.taglist_bg_empty = "#383838"
+-- Le hax here to get font centered vertically
+theme.taglist_font = "Source Code Pro Semibold 12' rise='50"
 
 -- Display the taglist squares
-theme.taglist_squares_sel   = pathToConfig .. "powerbar/icons/square_sel.png"
-theme.taglist_squares_unsel = pathToConfig .. "powerbar/icons/square_unsel.png"
+--theme.taglist_squares_sel   = pathToConfig .. "powerbar/icons/square_sel.png"
+--theme.taglist_squares_unsel = pathToConfig .. "powerbar/icons/square_unsel.png"
 
 -- Variables set for theming the menu:
 -- menu_[bg|fg]_[normal|focus]

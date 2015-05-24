@@ -168,7 +168,7 @@ mytasklist.buttons = awful.util.table.join(
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
-    mypromptbox[s] = awful.widget.prompt()
+    mypromptbox[s] = powerbar.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     mylayoutbox[s] = awful.widget.layoutbox(s)
@@ -178,7 +178,8 @@ for s = 1, screen.count() do
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+    --mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+    mytaglist[s] = powerbar.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     -- Create a tasklist widget
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
@@ -187,8 +188,8 @@ for s = 1, screen.count() do
     mywibox[s] = awful.wibox({ position = "top", screen = s, height = "16" })
 
     -- Widgets that are aligned to the left
-    local left_layout = wibox.layout.fixed.horizontal()
-    left_layout:add(mylauncher)
+    local left_layout = powerbar.layout.fixed.right_arrow()
+    --left_layout:add(mylauncher)
     left_layout:add(mytaglist[s])
     left_layout:add(mypromptbox[s])
 
@@ -209,7 +210,7 @@ for s = 1, screen.count() do
     --layout:set_middle(mytasklist[s])
     --layout:set_right(right_layout)
     local layout = powerbar.layout.align()
-    layout:set_left(powerbar.segment(left_layout))
+    layout:set_left(left_layout)
     layout:set_middle(powerbar.segment(mytasklist[s]))
     layout:set_right(right_layout)
 
