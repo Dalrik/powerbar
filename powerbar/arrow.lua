@@ -22,8 +22,8 @@ function arrow.make_image(color_l, color_r, isLeft, exWidth)
     if cached then
         img = cached
     else
-        local rl, bl, gl = gears.color.parse_color(color_l)
-        local rr, br, gr = gears.color.parse_color(color_r)
+        local pat_l = gears.color(color_l)
+        local pat_r = gears.color(color_r)
         local template = gears.surface.load(beautiful.arrTemplate)
         local tw, h = gears.surface.get_size(template)
         local w = tw + exWidth
@@ -34,13 +34,11 @@ function arrow.make_image(color_l, color_r, isLeft, exWidth)
         if not isLeft then
             cr:rotate(math.pi)
             cr:translate(-w, -h)
-            local rt, bt, gt = rl, bl, gl
-            rl, bl, gl = rr, br, gr
-            rr, br, gr = rt, bt, gt
+            pat_l, pat_r = pat_r, pat_l
         end
 
         -- Draw "non-arrow" background
-        cr:set_source_rgb(rl,bl,gl)
+        cr:set_source(pat_l)
         cr:paint()
 
         if color_l == color_r then
@@ -48,14 +46,14 @@ function arrow.make_image(color_l, color_r, isLeft, exWidth)
             cr:set_source_surface(altTemplate, 0, 0)
             cr:paint()
         else
-            cr:set_source_rgb(rr,br,gr)
+            cr:set_source(pat_r)
             cr:mask_surface(template, 0, 0)
         end
 
         if exWidth ~= 0 then
             cr:rectangle(tw, 0, exWidth, h)
             cr:clip()
-            cr:set_source_rgb(rr,br,gr)
+            cr:set_source(pat_r)
             cr:paint()
         end
         arrow_cache[cache_str] = img
