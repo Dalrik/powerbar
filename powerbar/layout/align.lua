@@ -23,8 +23,8 @@ function align:set_arrow_left(arr)
 end
 
 function align:refresh_layout()
-    local arr_lm = arrow(false)
-    local arr_mr = arrow(true)
+    local arr_lm = arrow.right()
+    local arr_mr = arrow.left()
     local box_l = wibox.layout.fixed.horizontal()
     local box_r = wibox.layout.fixed.horizontal()
 

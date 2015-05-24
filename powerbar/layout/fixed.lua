@@ -59,6 +59,14 @@ local function new(isLeft)
     return ret
 end
 
+function fixed.left_arrow()
+    return new(true)
+end
+
+function fixed.right_arrow()
+    return new(false)
+end
+
 function fixed.mt:__call(...)
     return new(...)
 end

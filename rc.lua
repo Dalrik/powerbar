@@ -193,7 +193,7 @@ for s = 1, screen.count() do
     left_layout:add(mypromptbox[s])
 
     -- Segments that are aligned to the right
-    local right_layout = powerbar.layout.fixed(true)
+    local right_layout = powerbar.layout.fixed.left_arrow()
 
     if s == 1 then 
         right_layout:add(powerbar.widget.systray())

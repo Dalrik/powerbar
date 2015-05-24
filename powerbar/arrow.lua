@@ -8,9 +8,10 @@ local arrow = { mt = {} }
 
 local arrow_cache = setmetatable({}, { __mode = 'v' })
 
-function arrow:refresh_image()
-    local cache_str = self.color_left .. self.color_right
-    if self.isLeft then
+function arrow.make_image(color_l, color_r, isLeft, exWidth)
+    exWidth = exWidth or 0
+    local cache_str = color_l .. color_r .. exWidth
+    if isLeft then
         cache_str = "L" .. cache_str
     else
         cache_str = "R" .. cache_str
@@ -21,15 +22,16 @@ function arrow:refresh_image()
     if cached then
         img = cached
     else
-        local rl, bl, gl = gears.color.parse_color(self.color_left)
-        local rr, br, gr = gears.color.parse_color(self.color_right)
+        local rl, bl, gl = gears.color.parse_color(color_l)
+        local rr, br, gr = gears.color.parse_color(color_r)
         local template = gears.surface.load(beautiful.arrTemplate)
-        local w, h = gears.surface.get_size(template)
+        local tw, h = gears.surface.get_size(template)
+        local w = tw + exWidth
         img = cairo.ImageSurface(cairo.Format.RGBA32, w, h)
         local cr = cairo.Context(img)
 
         -- Adjust transformation matrix if rendering a right arrow
-        if not self.isLeft then
+        if not isLeft then
             cr:rotate(math.pi)
             cr:translate(-w, -h)
             local rt, bt, gt = rl, bl, gl
@@ -41,7 +43,7 @@ function arrow:refresh_image()
         cr:set_source_rgb(rl,bl,gl)
         cr:paint()
 
-        if self.color_left == self.color_right then
+        if color_l == color_r then
             altTemplate = gears.surface.load(beautiful.arrAltTemplate)
             cr:set_source_surface(altTemplate, 0, 0)
             cr:paint()
@@ -49,10 +51,21 @@ function arrow:refresh_image()
             cr:set_source_rgb(rr,br,gr)
             cr:mask_surface(template, 0, 0)
         end
+
+        if exWidth ~= 0 then
+            cr:rectangle(tw, 0, exWidth, h)
+            cr:clip()
+            cr:set_source_rgb(rr,br,gr)
+            cr:paint()
+        end
         arrow_cache[cache_str] = img
     end
-    
-    self:set_image(img)
+
+    return img
+end
+
+function arrow:refresh_image()
+    self:set_image(arrow.make_image(self.color_left, self.color_right, self.isLeft))
 end
 
 function arrow:set_color_left(color)
@@ -84,6 +97,14 @@ local function new(isLeft)
     ret:refresh_image()
 
     return ret
+end
+
+function arrow.left()
+    return new(true)
+end
+
+function arrow.right()
+    return new(false)
 end
 
 function arrow.mt:__call(...)
