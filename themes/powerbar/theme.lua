@@ -10,13 +10,18 @@ pathToConfig = "~/.config/awesome/themes/"
 theme.font          = "Source Sans Semibold 8"
 
 theme.bg_normal     = "#181818" -- base 00
-theme.bg_focus      = "#1E2320"
-theme.bg_urgent     = "#3F3F3F"
+theme.bg_focus      = "#a1b56C"
+theme.bg_urgent     = "#ab4642"
 theme.bg_systray    = theme.bg_normal
+theme.bg_minimize   = "#DC9656"
+
+theme.tasklist_bg_normal = "#7cafc2"
+theme.tasklist_fg_normal = "#282828"
 
 theme.fg_normal     = "#D8D8D8" -- base 05
-theme.fg_focus      = "#0099CC"
-theme.fg_urgent     = "#3F3F3F"
+theme.fg_focus      = "#282828"
+theme.fg_urgent     = "#282828"
+theme.fg_minimize   = "#282828"
 
 theme.border_width  = 1
 theme.border_normal = "#000000"

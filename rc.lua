@@ -182,7 +182,7 @@ for s = 1, screen.count() do
     mytaglist[s] = powerbar.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
+    mytasklist[s] = powerbar.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
     mywibox[s] = awful.wibox({ position = "top", screen = s, height = "16" })
@@ -211,7 +211,7 @@ for s = 1, screen.count() do
     --layout:set_right(right_layout)
     local layout = powerbar.layout.align()
     layout:set_left(left_layout)
-    layout:set_middle(powerbar.segment(mytasklist[s]))
+    layout:set_middle(mytasklist[s])
     layout:set_right(right_layout)
 
     mywibox[s]:set_widget(layout)
