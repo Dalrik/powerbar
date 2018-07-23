@@ -29,39 +29,46 @@ function align:refresh_layout()
     local box_l = wibox.layout.fixed.horizontal()
     local box_r = wibox.layout.fixed.horizontal()
 
-    if self._private.left then
-        self._private.left.arrow_left  = self._private.arr_left
-        self._private.left.arrow_right = arr_lm
-        box_l:add(self._private.left)
+    if self._private.first then
+        self._private.first.arrow_left  = self._private.arr_left
+        self._private.first.arrow_right = arr_lm
+        box_l:add(self._private.first)
     end
     box_l:add(arr_lm)
-    if self._private.middle then
-        self._private.middle.arrow_left  = arr_lm
-        self._private.middle.arrow_right = arr_mr
+    if self._private.second then
+        self._private.second.arrow_left  = arr_lm
+        self._private.second.arrow_right = arr_mr
     end
     box_r:add(arr_mr)
-    if self._private.right then
-        self._private.right.arrow_left  = arr_mr
-        self._private.right.arrow_right = arr_right
-        box_r:add(self._private.right)
+    if self._private.third then
+        self._private.third.arrow_left  = arr_mr
+        self._private.third.arrow_right = arr_right
+        box_r:add(self._private.third)
     end
 
     wibox.layout.align.set_first(self, box_l)
-    wibox.layout.align.set_second(self, self._private.middle)
+    wibox.layout.align.set_second(self, self._private.second)
     wibox.layout.align.set_third(self, box_r)
 end
 
-function align:set_left(segment)
+function align:set_children(children)
+    self._private.first = children[1]
+    self._private.second = children[2]
+    self._private.third = children[3]
+    self:refresh_layout()
+end
+
+function align:set_first(segment)
     self._private.left = segment
     self:refresh_layout()
 end
 
-function align:set_middle(segment)
+function align:set_second(segment)
     self._private.middle = segment
     self:refresh_layout()
 end
 
-function align:set_right(segment)
+function align:set_third(segment)
     self._private.right = segment
     self:refresh_layout()
 end

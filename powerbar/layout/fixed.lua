@@ -1,5 +1,5 @@
 local wibox = require("wibox")
-local util  = require("awful.util")
+local gtable = require("gears.table")
 local arrow = require("powerbar.arrow")
 
 local fixed = { mt = {} }
@@ -18,34 +18,45 @@ function fixed:set_arrow_left(arr)
     end
 end
 
-function fixed:add(segment)
-    if self._private.leftmost then
-        local arr = arrow(self._private.isLeft)
-        self._private.rightmost.arrow_right = arr
-        segment.arrow_left = arr
-        if self._private.arr_right then
-            segment.arrow_right = self._private.arr_right
+function fixed:add(...)
+    local args = { n=select('#', ...), ... }
+    assert(args.n > 0, "need at least one widget to add")
+    for i=1, args.n do
+        local segment = args[i]
+        if self._private.leftmost then
+            local arr = arrow(self._private.isLeft)
+            self._private.rightmost.arrow_right = arr
+            segment.arrow_left = arr
+            if self._private.arr_right then
+                segment.arrow_right = self._private.arr_right
+            end
+            wibox.layout.fixed.add(self, arr)
+            self._private.rightmost = segment
+        else
+            if self._private.arr_right then
+                segment.arrow_right = self._private.arr_right
+            end
+            if self._private.arr_left then
+                segment.arrow_left = self._private.arr_left
+            end
+            self._private.leftmost = segment
+            self._private.rightmost = segment
         end
-        wibox.layout.fixed.add(self, arr)
-        self._private.rightmost = segment
-    else
-        if self._private.arr_right then
-            segment.arrow_right = self._private.arr_right
-        end
-        if self._private.arr_left then
-            segment.arrow_left = self._private.arr_left
-        end
-        self._private.leftmost = segment
-        self._private.rightmost = segment
+        wibox.layout.fixed.add(self, segment)
     end
+end
 
-    wibox.layout.fixed.add(self, segment)
+function fixed:reset()
+    self._private.leftmost = nil
+    self._private.rightmost = nil
+
+    wibox.layout.fixed.reset(self)
 end
 
 local function new(isLeft)
     local ret = wibox.layout.fixed.horizontal()
 
-    util.table.crush(ret, fixed, true)
+    gtable.crush(ret, fixed, true)
 
     ret._private.isLeft = isLeft
     ret._private.leftmost = nil
