@@ -1,6 +1,7 @@
 local beautiful = require("beautiful")
 local gears = require("gears")
 local wibox = require("wibox")
+local util  = require("awful.util")
 local cairo = require("lgi").cairo
 local beautiful = require("beautiful")
 
@@ -24,6 +25,8 @@ function arrow.make_image(color_l, color_r, isLeft, exWidth, drawSeparator)
     if drawSeparator == nil then
         drawSeparator = true
     end
+    color_l = color_l or beautiful.bg_systray
+    color_r = color_r or beautiful.bg_systray
     local cache_str = color_l .. color_r .. exWidth
     if isLeft then
         cache_str = "L" .. cache_str
@@ -79,19 +82,19 @@ function arrow.make_image(color_l, color_r, isLeft, exWidth, drawSeparator)
 end
 
 function arrow:refresh_image()
-    self:set_image(arrow.make_image(self.color_left, self.color_right, self.isLeft))
+    self.image = arrow.make_image(self._private.color_left, self._private.color_right, self._private.isLeft)
 end
 
 function arrow:set_color_left(color)
-    if self.color_left ~= color then
-        self.color_left = color
+    if self._private.color_left ~= color then
+        self._private.color_left = color
         self:refresh_image()
     end
 end
 
 function arrow:set_color_right(color)
-    if self.color_right ~= color then
-        self.color_right = color
+    if self._private.color_right ~= color then
+        self._private.color_right = color
         self:refresh_image()
     end
 end
@@ -99,15 +102,11 @@ end
 local function new(isLeft)
     local ret = wibox.widget.imagebox(nil, false)
 
-    for k, v in pairs(arrow) do
-        if type(v) == "function" then
-            ret[k] = v
-        end
-    end
+    util.table.crush(ret, arrow, true)
 
-    ret.isLeft = isLeft
-    ret.color_left = beautiful.bg_normal
-    ret.color_right = beautiful.bg_normal
+    ret._private.isLeft = isLeft
+    ret._private.color_left = nil
+    ret._private.color_right = nil
     ret:refresh_image()
 
     return ret

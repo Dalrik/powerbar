@@ -1,5 +1,6 @@
 local wibox = require("wibox")
 local awful = require("awful")
+local util  = require("awful.util")
 local widget_common = require("awful.widget.common")
 local segment = require("powerbar.segment")
 local arrow = require("powerbar.arrow")
@@ -9,16 +10,16 @@ local taglist = { mt = {} }
 
 -- implement segment interface
 function taglist:set_arrow_right(arr)
-    self.arr_right = arr
+    self._private.arr_right = arr
     if arr then
-        arr:set_color_left(self.color_right)
+        arr.color_left = self._private.color_right
     end
 end
 
 function taglist:set_arrow_left(arr)
-    self.arr_left = arr
+    self._private.arr_left = arr
     if arr then
-        arr:set_color_right(self.color_left)
+        arr.color_right = self._private.color_left
     end
 end
 
@@ -27,11 +28,11 @@ function taglist:set_color(color)
 end
 
 function taglist:refresh_outer_arrows()
-    if self.arr_left then
-        self.arr_left:set_color_right(self.color_left)
+    if self._private.arr_left then
+        self._private.arr_left.color_right = self._private.color_left
     end
-    if self.arr_right then
-        self.arr_right:set_color_left(self.color_right)
+    if self._private.arr_right then
+        self._private.arr_right.color_left = self._private.color_right
     end
 end
 
@@ -79,7 +80,7 @@ local function my_update(w, buttons, label, data, tags, args)
             last_bgb:set_bgimage(arrow.make_image(last_color, color, false, 7, false))
         else
             -- This is the first tag, its color defines the left-side arrow color
-            w.color_left = color
+            w._private.color_left = color
         end
         last_color = color
         last_bgb = bgb
@@ -87,7 +88,7 @@ local function my_update(w, buttons, label, data, tags, args)
     end
 
     last_l:set_strategy('max')
-    w.color_right = last_color
+    w._private.color_right = last_color
     -- we update once before the object finishes constructing
     if w.refresh_outer_arrows then
         w:refresh_outer_arrows()
@@ -98,11 +99,7 @@ local function new(screen, filter, buttons, style)
     local function update_func(w, b, l, d, o) return my_update(w, b, l, d, o, style) end
     local ret = awful.widget.taglist(screen, filter, buttons, style, update_func)
 
-    for k, v in pairs(taglist) do
-        if type(v) == "function" then
-            ret[k] = v
-        end
-    end
+    util.table.crush(ret, taglist, true)
 
     return ret
 end

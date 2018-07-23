@@ -12,7 +12,7 @@ theme.font          = "Source Sans Semibold 8"
 theme.bg_normal     = "#181818" -- base 00
 theme.bg_focus      = "#a1b56C"
 theme.bg_urgent     = "#ab4642"
-theme.bg_systray    = theme.bg_normal
+theme.bg_systray    = "#383838"
 theme.bg_minimize   = "#DC9656"
 
 theme.tasklist_bg_normal = "#7cafc2"
@@ -23,16 +23,19 @@ theme.fg_focus      = "#282828"
 theme.fg_urgent     = "#282828"
 theme.fg_minimize   = "#282828"
 
-theme.border_width  = 1
+theme.border_width  = 0
 theme.border_normal = "#000000"
 theme.border_focus  = "#535d6c"
 theme.border_marked = "#91231c"
 
-theme.fg_clock      = "#EEEEEE"
-theme.bg_clock      = "#777E76"
+--theme.fg_clock      = "#EEEEEE"
+--theme.bg_clock      = "#777E76"
 
 theme.fg_prompt     = "#181818"
 theme.bg_prompt     = "#E8E8E8"
+
+theme.fg_clock      = theme.fg_prompt
+theme.bg_clock      = theme.bg_prompt
 
 -- There are other variable sets
 -- overriding the default one when

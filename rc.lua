@@ -46,7 +46,7 @@ beautiful.init("/home/ian/.config/awesome/themes/powerbar/theme.lua")
 awesome.font = "TerminusMedium 12"
 
 -- This is used later as the default terminal and editor to run.
-terminal = "urxvt"
+terminal = "termite"
 editor = os.getenv("EDITOR") or "nano"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -166,7 +166,7 @@ mytasklist.buttons = awful.util.table.join(
                                               if client.focus then client.focus:raise() end
                                           end))
 
-for s = 1, screen.count() do
+awful.screen.connect_for_each_screen(function(s)
     -- Create a promptbox for each screen
     mypromptbox[s] = powerbar.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
@@ -196,13 +196,13 @@ for s = 1, screen.count() do
     -- Segments that are aligned to the right
     local right_layout = powerbar.layout.fixed.left_arrow()
 
-    if s == 1 then 
+    if s.index == 1 then 
         right_layout:add(powerbar.widget.systray())
     end
 
-    right_layout:add(powerbar.widget.clock('%b %d %I:%M', 15, nil, nil, 'Source Code Pro Semibold 12'))
+    right_layout:add(powerbar.widget.clock('%b %d %H:%M', 15, nil, nil))
     right_layout:add(powerbar.widget.bat("BAT0"))
-    right_layout:add(powerbar.segment(mylayoutbox[s], "#313131"))
+    right_layout:add(mylayoutbox[s])
 
     -- Now bring it all together (with the tasklist in the middle)
     --local layout = wibox.layout.align.horizontal()
@@ -215,7 +215,7 @@ for s = 1, screen.count() do
     layout:set_right(right_layout)
 
     mywibox[s]:set_widget(layout)
-end
+end )
 -- }}}
 
 -- {{{ Mouse bindings
@@ -298,7 +298,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey }, "z", function()
                                     awful.prompt.run({ prompt = "Connect to server: " },
                                     mypromptbox[mouse.screen].widget,
-                                    function(server) awful.util.spawn("urxvt -e connect " .. server) end,
+                                    function(server) awful.util.spawn("termite -e 'connect " .. server .. "'") end,
                                     nil)
                                end),
 

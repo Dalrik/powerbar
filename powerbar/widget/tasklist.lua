@@ -5,26 +5,27 @@ local util = require("awful.util")
 local tag = require("awful.tag")
 local wibox = require("wibox")
 local awful = require("awful")
+local util  = require("awful.util")
 local widget_common = require("awful.widget.common")
 local segment = require("powerbar.segment")
 local arrow = require("powerbar.arrow")
 local beautiful = require("beautiful")
-expander = require("powerbar.widget.expander")
+local expander = require("powerbar.widget.expander")
 
 local tasklist = { mt = {} }
 
 -- implement segment interface
 function tasklist:set_arrow_right(arr)
-    self.arr_right = arr
+    self._private.arr_right = arr
     if arr then
-        arr:set_color_left(self.color_right)
+        arr.color_left = self._private.color_right
     end
 end
 
 function tasklist:set_arrow_left(arr)
-    self.arr_left = arr
+    self._private.arr_left = arr
     if arr then
-        arr:set_color_right(self.color_left)
+        arr.color_right = self._private.color_left
     end
 end
 
@@ -33,52 +34,71 @@ function tasklist:set_color(color)
 end
 
 function tasklist:refresh_outer_arrows()
-    if self.arr_left then
-        self.arr_left:set_color_right(self.color_left)
+    if self._private.arr_left then
+        self._private.arr_left.color_right = self._private.color_left
     end
-    if self.arr_right then
-        self.arr_right:set_color_left(self.color_right)
+    if self._private.arr_right then
+        self._private.arr_right.color_left = self._private.color_right
     end
 end
 
 -- Copied from awful's tasklist.lua. Someone decided it would be best if it was a
 -- local function <_<
-local function tasklist_label(c, args)
+local function tasklist_label(c, args, tb)
     if not args then args = {} end
     local theme = beautiful.get()
-    local fg_normal = args.fg_normal or theme.tasklist_fg_normal or theme.fg_normal or "#ffffff"
+    local align = args.align or theme.tasklist_align or "left"
+    local fg_normal = util.ensure_pango_color(args.fg_normal or theme.tasklist_fg_normal or theme.fg_normal, "white")
     local bg_normal = args.bg_normal or theme.tasklist_bg_normal or theme.bg_normal or "#000000"
-    local fg_focus = args.fg_focus or theme.tasklist_fg_focus or theme.fg_focus
-    local bg_focus = args.bg_focus or theme.tasklist_bg_focus or theme.bg_focus
-    local fg_urgent = args.fg_urgent or theme.tasklist_fg_urgent or theme.fg_urgent
-    local bg_urgent = args.bg_urgent or theme.tasklist_bg_urgent or theme.bg_urgent
-    local fg_minimize = args.fg_minimize or theme.tasklist_fg_minimize or theme.fg_minimize
-    local bg_minimize = args.bg_minimize or theme.tasklist_bg_minimize or theme.bg_minimize
+    local fg_focus = util.ensure_pango_color(args.fg_focus or theme.tasklist_fg_focus or theme.fg_focus, fg_normal)
+    local bg_focus = args.bg_focus or theme.tasklist_bg_focus or theme.bg_focus or bg_normal
+    local fg_urgent = util.ensure_pango_color(args.fg_urgent or theme.tasklist_fg_urgent or theme.fg_urgent, fg_normal)
+    local bg_urgent = args.bg_urgent or theme.tasklist_bg_urgent or theme.bg_urgent or bg_normal
+    local fg_minimize = util.ensure_pango_color(args.fg_minimize or theme.tasklist_fg_minimize or theme.fg_minimize, fg_normal)
+    local bg_minimize = args.bg_minimize or theme.tasklist_bg_minimize or theme.bg_minimize or bg_normal
     local bg_image_normal = args.bg_image_normal or theme.bg_image_normal
     local bg_image_focus = args.bg_image_focus or theme.bg_image_focus
     local bg_image_urgent = args.bg_image_urgent or theme.bg_image_urgent
     local bg_image_minimize = args.bg_image_minimize or theme.bg_image_minimize
     local tasklist_disable_icon = args.tasklist_disable_icon or theme.tasklist_disable_icon or false
     local font = args.font or theme.tasklist_font or theme.font or ""
-    local bg = nil
-    local text = "<span font_desc='"..font.."'>"
+    local font_focus = args.font_focus or theme.tasklist_font_focus or theme.font_focus or font or ""
+    local font_minimized = args.font_minimized or theme.tasklist_font_minimized or theme.font_minimized or font or ""
+    local font_urgent = args.font_urgent or theme.tasklist_font_urgent or theme.font_urgent or font or ""
+    local text = ""
     local name = ""
-    local bg_image = nil
-    local focused = false
+    local bg
+    local bg_image
+    local shape              = args.shape or theme.tasklist_shape
+    local shape_border_width = args.shape_border_width or theme.tasklist_shape_border_width
+    local shape_border_color = args.shape_border_color or theme.tasklist_shape_border_color
 
     -- symbol to use to indicate certain client properties
     local sticky = args.sticky or theme.tasklist_sticky or "▪"
     local ontop = args.ontop or theme.tasklist_ontop or '⌃'
+    local above = args.above or theme.tasklist_above or '▴'
+    local below = args.below or theme.tasklist_below or '▾'
     local floating = args.floating or theme.tasklist_floating or '✈'
+    local maximized = args.maximized or theme.tasklist_maximized or '<b>+</b>'
     local maximized_horizontal = args.maximized_horizontal or theme.tasklist_maximized_horizontal or '⬌'
     local maximized_vertical = args.maximized_vertical or theme.tasklist_maximized_vertical or '⬍'
 
+    tb:set_align(align)
+
     if not theme.tasklist_plain_task_name then
         if c.sticky then name = name .. sticky end
-        if c.ontop then name = name .. ontop end
-        if client.floating.get(c) then name = name .. floating end
-        if c.maximized_horizontal then name = name .. maximized_horizontal end
-        if c.maximized_vertical then name = name .. maximized_vertical end
+
+        if c.ontop then name = name .. ontop
+        elseif c.above then name = name .. above
+        elseif c.below then name = name .. below end
+
+        if c.maximized then
+            name = name .. maximized
+        else
+            if c.maximized_horizontal then name = name .. maximized_horizontal end
+            if c.maximized_vertical then name = name .. maximized_vertical end
+            if c.floating then name = name .. floating end
+        end
     end
 
     if c.minimized then
@@ -86,30 +106,82 @@ local function tasklist_label(c, args)
     else
         name = name .. (util.escape(c.name) or util.escape("<untitled>"))
     end
-    if capi.client.focus == c then
+
+    local focused = capi.client.focus == c
+    -- Handle transient_for: the first parent that does not skip the taskbar
+    -- is considered to be focused, if the real client has skip_taskbar.
+    if not focused and capi.client.focus and capi.client.focus.skip_taskbar
+        and capi.client.focus:get_transient_for_matching(function(cl)
+                                                             return not cl.skip_taskbar
+                                                         end) == c then
         focused = true
+    end
+
+    if focused then
         bg = bg_focus
+        text = text .. "<span color='"..fg_focus.."'>"..name.."</span>"
         bg_image = bg_image_focus
-        if fg_focus then
-            text = text .. "<span color='"..util.color_strip_alpha(fg_focus).."'>"..name.."</span>"
-        else
-            text = text .. "<span color='"..util.color_strip_alpha(fg_normal).."'>"..name.."</span>"
+        font = font_focus
+
+        if args.shape_focus or theme.tasklist_shape_focus then
+            shape = args.shape_focus or theme.tasklist_shape_focus
         end
-    elseif c.urgent and fg_urgent then
+
+        if args.shape_border_width_focus or theme.tasklist_shape_border_width_focus then
+            shape_border_width = args.shape_border_width_focus or theme.tasklist_shape_border_width_focus
+        end
+
+        if args.shape_border_color_focus or theme.tasklist_shape_border_color_focus then
+            shape_border_color = args.shape_border_color_focus or theme.tasklist_shape_border_color_focus
+        end
+    elseif c.urgent then
         bg = bg_urgent
-        text = text .. "<span color='"..util.color_strip_alpha(fg_urgent).."'>"..name.."</span>"
+        text = text .. "<span color='"..fg_urgent.."'>"..name.."</span>"
         bg_image = bg_image_urgent
-    elseif c.minimized and fg_minimize and bg_minimize then
+        font = font_urgent
+
+        if args.shape_urgent or theme.tasklist_shape_urgent then
+            shape = args.shape_urgent or theme.tasklist_shape_urgent
+        end
+
+        if args.shape_border_width_urgent or theme.tasklist_shape_border_width_urgent then
+            shape_border_width = args.shape_border_width_urgent or theme.tasklist_shape_border_width_urgent
+        end
+
+        if args.shape_border_color_urgent or theme.tasklist_shape_border_color_urgent then
+            shape_border_color = args.shape_border_color_urgent or theme.tasklist_shape_border_color_urgent
+        end
+    elseif c.minimized then
         bg = bg_minimize
-        text = text .. "<span color='"..util.color_strip_alpha(fg_minimize).."'>"..name.."</span>"
+        text = text .. "<span color='"..fg_minimize.."'>"..name.."</span>"
         bg_image = bg_image_minimize
+        font = font_minimized
+
+        if args.shape_minimized or theme.tasklist_shape_minimized then
+            shape = args.shape_minimized or theme.tasklist_shape_minimized
+        end
+
+        if args.shape_border_width_minimized or theme.tasklist_shape_border_width_minimized then
+            shape_border_width = args.shape_border_width_minimized or theme.tasklist_shape_border_width_minimized
+        end
+
+        if args.shape_border_color_minimized or theme.tasklist_shape_border_color_minimized then
+            shape_border_color = args.shape_border_color_minimized or theme.tasklist_shape_border_color_minimized
+        end
     else
         bg = bg_normal
-        text = text .. "<span color='"..util.color_strip_alpha(fg_normal).."'>"..name.."</span>"
+        text = text .. "<span color='"..fg_normal.."'>"..name.."</span>"
         bg_image = bg_image_normal
     end
-    text = text .. "</span>"
-    return text, bg, focused, not tasklist_disable_icon and c.icon or nil
+    tb:set_font(font)
+
+    local other_args = {
+        shape              = shape,
+        shape_border_width = shape_border_width,
+        shape_border_color = shape_border_color,
+    }
+
+    return text, bg, focused, bg_image, not tasklist_disable_icon and c.icon or nil, other_args
 end
 
 local function my_update(w, buttons, label, data, tasks, args)
@@ -128,19 +200,19 @@ local function my_update(w, buttons, label, data, tasks, args)
             m = cache.m
             l = cache.l
             a = cache.a
+            a:set_right(nil)
         else
             tb = wibox.widget.textbox()
             ib = wibox.widget.imagebox()
-            bgb = wibox.widget.background()
+            bgb = wibox.container.background()
             m = wibox.layout.margin(tb, 4, 4)
             l = wibox.layout.fixed.horizontal()
             a = wibox.layout.align.horizontal()
 
             l:add(ib)
             l:add(m)
-            l:add(expander())
 
-            bgb:set_widget(l)
+            bgb.widget = l
 
             bgb:buttons(widget_common.create_buttons(buttons, o))
 
@@ -156,11 +228,11 @@ local function my_update(w, buttons, label, data, tasks, args)
             }
         end
         
-        local text, color, focused, icon = tasklist_label(o, args)
+        local text, color, focused, bg_image, icon = tasklist_label(o, args, tb)
         if color == nil then
             color = beautiful.bg_normal
         end
-        if not pcall(tb.set_markup, tb, text) then
+        if not tb:set_markup_silently(text) then
             tb:set_markup("<i>&lt;Invalid text&gt;</i>")
         end
         bgb:set_bg(color)
@@ -168,11 +240,11 @@ local function my_update(w, buttons, label, data, tasks, args)
 
         if last_a then
             local arr = arrow(seen_focused)
-            arr:set_color_left(last_color)
-            arr:set_color_right(color)
+            arr.color_left = last_color
+            arr.color_right = color
             last_a:set_right(arr)
         else
-            w.color_left = color
+            w._private.color_left = color
         end
 
         w:add(a)
@@ -183,27 +255,21 @@ local function my_update(w, buttons, label, data, tasks, args)
     end
 
     if not last_a then
-        w.color_left = beautiful.bg_normal
+        w._private.color_left = beautiful.bg_normal
     end
-    w.color_right = last_color or beautiful.bg_normal
+    w._private.color_right = last_color or beautiful.bg_normal
     -- we update once before the object finishes constructing
-    if w.refresh_outer_arrows then
-        w:refresh_outer_arrows()
-    end
+    w:refresh_outer_arrows()
 end
-
+local naughty = require("naughty")
 local function new(screen, filter, buttons, style)
     local function update_func(w, b, l, d, o) return my_update(w, b, l, d, o, style) end
     local ret = awful.widget.tasklist(screen, filter, buttons, style, update_func)
 
-    for k, v in pairs(tasklist) do
-        if type(v) == "function" then
-            ret[k] = v
-        end
-    end
+    util.table.crush(ret, tasklist, true)
 
-    ret.color_left = beautiful.bg_normal
-    ret.color_right = beautiful.bg_normal
+    ret._private.color_left = beautiful.bg_normal
+    ret._private.color_right = beautiful.bg_normal
 
     return ret
 end

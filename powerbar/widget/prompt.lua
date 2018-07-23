@@ -35,7 +35,7 @@ local function new(args, color)
     -- Hack to modify foreground color of run prompt
     local tbox_set_markup = widget.set_markup
     local function override_set_markup(w, text)
-        text = "<span foreground='" .. util.color_strip_alpha(fg_color) .. "'>" .. text .. "</span>"
+        text = "<span foreground='" .. util.ensure_pango_color(fg_color, "black") .. "'>" .. text .. "</span>"
         tbox_set_markup(w, text)
     end
     widget.set_markup = override_set_markup

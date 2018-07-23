@@ -1,48 +1,45 @@
-local widget = require("wibox.widget")
+local container = require("wibox.container")
+local util      = require("awful.util")
 local beautiful = require("beautiful")
 
 local segment = { mt = {} }
 
 function segment:set_arrow_right(arr)
-    self.arr_right = arr
+    self._private.arr_right = arr
     if arr then
-        arr:set_color_left(self.color)
+        arr.color_left = self._private.color
     end
 end
 
 function segment:set_arrow_left(arr)
-    self.arr_left = arr
+    self._private.arr_left = arr
     if arr then
-        arr:set_color_right(self.color)
+        arr.color_right = self._private.color
     end
 end
 
 function segment:set_color(color)
-    if self.color ~= color then
-        if self.arr_left then
-            self.arr_left:set_color_right(color)
+    if self._private.color ~= color then
+        if self._private.arr_left then
+            self._private.arr_left.color_right = color
         end
-        if self.arr_right then
-            self.arr_right:set_color_left(color)
+        if self._private.arr_right then
+            self._private.arr_right.color_left = color
         end
-        self.color = color
-        self:set_bg(color)
+        self._private.color = color
+        self.bg = color
     end
 end
 
 local function new(base, color)
     color = color or beautiful.bg_normal
-    local ret = widget.background()
-    ret:set_widget(base)
+    local ret = container.background()
+    ret.widget = base
     base.seg = ret
 
-    for k, v in pairs(segment) do
-        if type(v) == "function" then
-            ret[k] = v
-        end
-    end
+    util.table.crush(ret, segment, true)
 
-    ret:set_color(color)
+    ret.color = color
 
     return ret
 end

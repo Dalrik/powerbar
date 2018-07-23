@@ -1,11 +1,12 @@
 local wibox = require("wibox")
 local vicious = require("vicious")
 local segment = require("powerbar.segment")
+local beautiful = require("beautiful")
 
 local bat = { mt = {} }
 
 local function lerp(none, full, ratio)
-    range = full - none
+    local range = full - none
     return none + range*ratio
 end
 
@@ -34,10 +35,10 @@ local function HSVtoRGB(h, s, v)
 end
 
 local function bat_update(w, data)
-    charge = tonumber(data[2])/100
-    hval = lerp(0, .3333, charge)
-    bgcolor = HSVtoRGB(hval, .8, .5)
-    fgcolor = HSVtoRGB(hval, .6, 1)
+    local charge = tonumber(data[2])/100
+    local hval = lerp(0, .3333, charge)
+    local bgcolor = HSVtoRGB(hval, .4, .7)
+    local fgcolor = beautiful.fg_focus
 
     if string.find(data[3], "-") or data[3] == "N/A" then
         data[3] = " "
