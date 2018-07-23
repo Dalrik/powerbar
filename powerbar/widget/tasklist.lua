@@ -11,6 +11,9 @@ local segment = require("powerbar.segment")
 local arrow = require("powerbar.arrow")
 local beautiful = require("beautiful")
 local expander = require("powerbar.widget.expander")
+local base = require("wibox.widget.base")
+local gmath = require("gears.math")
+local floor = math.floor
 
 local tasklist = { mt = {} }
 
@@ -261,10 +264,54 @@ local function my_update(w, buttons, label, data, tasks, args)
     -- we update once before the object finishes constructing
     w:refresh_outer_arrows()
 end
+
+local function nogap_layout(self, _, width, height)
+    local result = {}
+    local pos,spacing = 0, self._private.spacing
+    local num = #self._private.widgets
+    local total_spacing = (spacing*(num-1))
+
+    local space_per_item
+    if self._private.dir == "y" then
+        space_per_item = height / num - total_spacing/num
+    else
+        space_per_item = width / num - total_spacing/num
+    end
+
+    if self._private.max_widget_size then
+        space_per_item = math.min(space_per_item, self._private.max_widget_size)
+    end
+
+    for _, v in pairs(self._private.widgets) do
+        local x, y, w, h
+        if self._private.dir == "y" then
+            x, y = 0, gmath.round(pos)
+            w, h = width, gmath.round(pos+space_per_item)-y
+        else
+            x, y = gmath.round(pos), 0
+            w, h = gmath.round(pos+space_per_item)-x, height
+        end
+
+        table.insert(result, base.place_widget_at(v, x, y, w, h))
+
+        pos = pos + space_per_item + spacing
+
+        if (self._private.dir == "y" and pos-spacing >= height) or
+            (self._private.dir ~= "y" and pos-spacing >= width) then
+            break
+        end
+    end
+
+    return result
+end
+
 local naughty = require("naughty")
 local function new(screen, filter, buttons, style)
     local function update_func(w, b, l, d, o) return my_update(w, b, l, d, o, style) end
-    local ret = awful.widget.tasklist(screen, filter, buttons, style, update_func)
+    local base_widget = wibox.layout.flex.horizontal()
+    base_widget.layout = nogap_layout
+
+    local ret = awful.widget.tasklist(screen, filter, buttons, style, update_func, base_widget)
 
     util.table.crush(ret, tasklist, true)
 
